@@ -1,27 +1,22 @@
-#ifndef SOLVE_HEADER
-#define SOLVE_HEADER
+#ifndef HEURISTIC_HEADER
+#define HEURISTIC_HEADER
 /*
 ***********************************************************************************************************************
 ***********************************************************************************************************************
-*** HAL9001 Rubix Cube Solving Robot - solve.h
+*** HAL9001 Rubix Cube Solving Robot - heuristic.h
 *** Chris Gerth - Summer 2014
 *** 
-*** Description: Main solving algorithm for determining an optimal sequence of moves to solve a given scrambled Rubix
-***              cube.
+*** Description: contains fixed tables for the heuristic functions
 ***
 ***********************************************************************************************************************
 ***********************************************************************************************************************
 */
 
-#include <stdio.h>
-#include "moves.h"
-#include "structures.h"
 
 
-unsigned char cur_cube [NUM_FACES][FACE_SIZE][FACE_SIZE];
-unsigned char next_cube [NUM_FACES][FACE_SIZE][FACE_SIZE];
+//ALWAYS ASSUME GREEN SIDE FACES YOU??
 
-
+unsigned char heuristic_top_bottom [NUM_COLORS][NUM_COLORS][NUM_COLORS][NUM_COLORS][NUM_COLORS][NUM_COLORS][NUM_COLORS][NUM_COLORS];
 
 
 
