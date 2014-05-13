@@ -20,7 +20,13 @@
 #define NUM_FACES 6
 #define NUM_COLORS NUM_FACES
 #define NUM_CUBIES 24
+#define NUM_CORNERS 8
+#define NUM_EDGES 12
+#define NUM_MOVES 18
+#define NUM_TWISTS 3
 
+#define INVALID_CUBIE 99
+#define SINGMASTER_LENGTH 70
 
 /*Define face enumeration*/
 #define UP_FACE 0
@@ -37,14 +43,15 @@
 #define TWIST_CCW 3
 
 /*rubiks cube object*/
-typedef struct Cube_t
+typedef struct Cube
 {
     /*corner cubies: 8 bits:  Position = [0:2], Orientation = [3:4], [5:7] = 0*/
-    unsigned char c[8] = {0,0,0,0,0,0,0,0};
+    unsigned char c[NUM_CORNERS];
     /*edge cubies: 8 bits: Orientation = [0], Position = [1:4], [5:7] = 0*/
-    unsigned char e[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
-} Cube;
+    unsigned char e[NUM_EDGES];
+} cube_t;
 
+cube_t Identity_Cube;
 
 
 
