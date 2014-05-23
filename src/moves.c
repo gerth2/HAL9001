@@ -233,7 +233,7 @@ static void move_cube(cube_t * in_cube, cube_t * out_cube, int move)
 void rotate_face(cube_t * in_cube, cube_t * out_cube, unsigned char face, unsigned char direction)
 {
 
-    move_cube(in_cube, out_cube, 3*face+(direction-1));
+    move_cube(in_cube, out_cube, (3*face)+(direction-1));
     return;
 
 }
