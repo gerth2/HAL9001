@@ -14,7 +14,21 @@
 
 #include "..\src\moves.h"
 #include "..\src\structures.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
+/*structure for linked list*/
+typedef struct List_Elem
+{
+    cube_t cube;
+    struct List_Elem * prev_elem;
+    struct List_Elem * next_elem;
 
+} listelem_t;
+
+listelem_t * init_list();
+listelem_t * append_element(cube_t * temp_cube);
+void remove_head();
 
 #endif

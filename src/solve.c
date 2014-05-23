@@ -16,6 +16,11 @@
 
 int main()
 {
-    printf("Running solve.c");
+    printf("Running solve.c\n");
+    init_data_structs();
+    
+    /*add code here to do things*/ 
+    
+    printf("Done!\n");
     return 0;
 }
