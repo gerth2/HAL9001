@@ -44,7 +44,7 @@ int main()
     list_tail = list_head;
     
     /*set goal state as zero-valued heuristic*/
-    temp_heuristic_c1[list_head->cube.c[0]][list_head->cube.c[1]][list_head->cube.c[2]][list_head->cube.c[3]] = 0;
+    temp_heuristic_c1[list_head->cube.c[1]][list_head->cube.c[3]][list_head->cube.c[4]][list_head->cube.c[7]] = 0;
     
     
     while(list_head != NULL)
@@ -58,9 +58,9 @@ int main()
                 rotate_face(&(list_head->cube), &temp_cube, face_iter, twist_iter);
                 //printf("Old Cube: %d %d %d %d \nNew Cube: %d %d %d %d\n\n", list_head->cube.c[0],list_head->cube.c[1],list_head->cube.c[2],list_head->cube.c[3],temp_cube.c[0],temp_cube.c[1],temp_cube.c[2],temp_cube.c[3] );
                 /*if the child is unexplored, enter distance into heuristic struct and add child to end of linked list*/
-                if(temp_heuristic_c1[temp_cube.c[0]][temp_cube.c[1]][temp_cube.c[2]][temp_cube.c[3]] == DIST_UNDEFINED)
+                if(temp_heuristic_c1[temp_cube.c[1]][temp_cube.c[3]][temp_cube.c[4]][temp_cube.c[7]] == DIST_UNDEFINED)
                 {
-                    temp_heuristic_c1[temp_cube.c[0]][temp_cube.c[1]][temp_cube.c[2]][temp_cube.c[3]] = list_head->sol_dist+1;
+                    temp_heuristic_c1[temp_cube.c[1]][temp_cube.c[3]][temp_cube.c[4]][temp_cube.c[7]] = list_head->sol_dist+1;
                     append_element(&temp_cube, list_head->sol_dist+1); /*assume uniform cost for now*/
                     num_analyzed = num_analyzed + 1;
                 }

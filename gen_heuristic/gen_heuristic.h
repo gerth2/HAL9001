@@ -42,12 +42,12 @@ listelem_t * list_tail; /*points to tail node*/
 unsigned char temp_heuristic_c1[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
 /*                  Corners:         1               3               4                7       */
 unsigned char temp_heuristic_c2[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
-/*                  Corners:         2               5               6                8       */
+/*                  Corners:         0               2               5                6       */
 
 unsigned char temp_heuristic_e1[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
 /*                    Edges:         1               4               7                11      */
 unsigned char temp_heuristic_e2[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
-/*                    Edges:         3               5               6                12      */
+/*                    Edges:         0               3               5                6       */
 unsigned char temp_heuristic_e3[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
 /*                    Edges:         2               8               9                10      */
 
