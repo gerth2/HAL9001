@@ -37,7 +37,8 @@
 #define LEFT_FACE 5
 /*Properties: opposite face to i is (i+3)%NUM_FACES*/
 
-/*Define Moves*/
+/*Define Twists*/
+#define TWIST_NONE 0 
 #define TWIST_CW 1
 #define TWIST_180_DEG 2
 #define TWIST_CCW 3

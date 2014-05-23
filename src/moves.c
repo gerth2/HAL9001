@@ -230,10 +230,11 @@ static void move_cube(cube_t * in_cube, cube_t * out_cube, int move)
 
 }
 
-int rotate_face(cube_t * in_cube, cube_t * out_cube, unsigned char face, unsigned char direction)
+void rotate_face(cube_t * in_cube, cube_t * out_cube, unsigned char face, unsigned char direction)
 {
-    printf("Running move.c");
-    return 0;
+
+    move_cube(in_cube, out_cube, 3*face+(direction-1));
+    return;
 
 }
 

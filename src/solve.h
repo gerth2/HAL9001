@@ -16,10 +16,9 @@
 #include <stdio.h>
 #include "moves.h"
 #include "structures.h"
+#include "heuristic.h"
 
 
-unsigned char cur_cube [NUM_FACES][FACE_SIZE][FACE_SIZE];
-unsigned char next_cube [NUM_FACES][FACE_SIZE][FACE_SIZE];
 
 
 

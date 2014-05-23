@@ -6,21 +6,28 @@
 *** 
 *** Description: Creates a .h file with the heuristic lookup table in it
 ***
-***********************************************************************************************************************
+*********************************************************************************************************************** 
 ***********************************************************************************************************************
 */
 
 #include "gen_heuristic.h"
 
-/*Global Variables*/
-listelem_t * list_head; /*points to head node*/
-listelem_t * list_tail; /*points to tail node*/
-
 int main()
 {
     FILE * f =  NULL;
+    cube_t temp_cube;
+    unsigned char face_iter = 0;
+    unsigned char twist_iter = 0;
+    unsigned long num_analyzed = 0;
+    int print_iter[4];
     
     init_data_structs();
+    memset(temp_heuristic_c1, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
+    memset(temp_heuristic_c2, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
+    memset(temp_heuristic_e1, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
+    memset(temp_heuristic_e2, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
+    memset(temp_heuristic_e3, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
+
 
     /*heuristic generation will be done via a Breadth-first search implemented through a doublly linked list*/
     /*each node in the search is expressed through one element of the linked list*/
@@ -32,15 +39,37 @@ int main()
     /*list, and the process is repeated on the new head of the list. The process continues until the list is empty.*/
     /*Only one process should be running at a time, so all atomicity should not matter.*/
     
-    /*initalize linked list*/
+    /*initialize linked list*/
     list_head = init_list();
     list_tail = list_head;
     
+    /*set goal state as zero-valued heuristic*/
+    temp_heuristic_c1[list_head->cube.c[1]][list_head->cube.c[3]][list_head->cube.c[4]][list_head->cube.c[7]] = 0;
+    
+    
+    while(list_head != NULL)
+    {
+        /*explore all children of the head node*/
+        for(face_iter = 0; face_iter < NUM_FACES; face_iter++)
+        {
+            for(twist_iter = 1; twist_iter <= NUM_TWISTS; twist_iter++) /*1-based indexing for twists for mathematical simplicity*/
+            {
+                /*generate a child*/
+                rotate_face(&(list_head->cube), &temp_cube, face_iter, twist_iter);
+                /*if the child is unexplored, enter distance into heuristic struct and add child to end of linked list*/
+                if(temp_heuristic_c1[temp_cube.c[1]][temp_cube.c[3]][temp_cube.c[4]][temp_cube.c[7]] == DIST_UNDEFINED)
+                {
+                    temp_heuristic_c1[temp_cube.c[1]][temp_cube.c[3]][temp_cube.c[4]][temp_cube.c[7]] = list_head->sol_dist+1;
+                    append_element(&temp_cube, list_head->sol_dist+1); /*assume uniform cost for now*/
+                    num_analyzed = num_analyzed + 1;
+                }
+            }
+        }
+        remove_head(); /*we're done with this node, move on*/
+        printf("%d\n", num_analyzed);
+    }
+    
 
-    
-    
-    
-    
     
     /*open heuristic file for writing*/
     f=fopen("src/heuristic.h", "w");
@@ -67,7 +96,43 @@ int main()
     fprintf(f, " ***********************************************************************************************************************\n");
     fprintf(f, " */\n\n\n\n");
     
-    /*write heuristic values to file*/
+    fprintf(f, "unsigned char heuristic_c1[32][32][32][32] = \n{\n");
+    for(print_iter[0] = 0; print_iter[0] < 32; print_iter[0]++)
+    {
+        fprintf(f, "{\n");
+        for(print_iter[1] = 0; print_iter[1] < 32; print_iter[1]++)
+        {
+            fprintf(f, "{\n");
+            fprintf(f, "/*%d, %d, X, X*/\n", print_iter[0], print_iter[1]); /*print marker*/
+            for(print_iter[2] = 0; print_iter[2] < 32; print_iter[2]++)
+            {
+                fprintf(f, "{");
+                for(print_iter[3] = 0; print_iter[3] < 32; print_iter[3]++)
+                {
+                    if(print_iter[3] == 31)
+                        fprintf(f,"%d" ,temp_heuristic_c1[print_iter[0]][print_iter[1]][print_iter[2]][print_iter[3]]);
+                    else
+                        fprintf(f,"%d," ,temp_heuristic_c1[print_iter[0]][print_iter[1]][print_iter[2]][print_iter[3]]);
+                }
+                if(print_iter[2] == 31)
+                    fprintf(f, "}");
+                else
+                    fprintf(f, "},");
+                fprintf(f,"\n");
+            }
+            if(print_iter[1] == 31)
+                fprintf(f, "}");
+            else
+                fprintf(f, "},");
+            fprintf(f,"\n\n\n");
+        }
+        if(print_iter[0] == 31)
+            fprintf(f, "}");
+        else
+            fprintf(f, "},");
+        fprintf(f,"\n\n\n\n\n");
+    }
+    fprintf(f, "};\n\n");
     
     /*close guard includes*/
     fprintf(f, " #endif\n");
@@ -95,6 +160,7 @@ listelem_t * init_list()
     memcpy(&(head_of_list->cube), &Identity_Cube, sizeof(cube_t)); /*set first list element's cube to be the identity (solved) cube*/
     head_of_list->prev_elem = NULL;
     head_of_list->next_elem = NULL;
+    head_of_list->sol_dist = 0;
     
     return head_of_list;
 
@@ -102,7 +168,7 @@ listelem_t * init_list()
 
 /*makes a new element with the specified cube, and appends it to the end of the list*/
 /*returns a pointer to the new element for error checking*/
-listelem_t * append_element(cube_t * temp_cube)
+listelem_t * append_element(cube_t * temp_cube, unsigned char sol_dist_input)
 {
     listelem_t * new_elem = (listelem_t*) malloc(sizeof(listelem_t)); /*make new list element*/
     
@@ -115,6 +181,9 @@ listelem_t * append_element(cube_t * temp_cube)
     
     new_elem->prev_elem = list_tail;
     new_elem->next_elem = NULL;
+    new_elem->sol_dist = sol_dist_input;
+    list_tail->next_elem = new_elem;
+    
     
     list_tail = new_elem;
     
@@ -130,7 +199,10 @@ void remove_head()
     listelem_t * temp;
     temp = list_head;
     list_head = list_head->next_elem;
-    list_head->prev_elem = NULL;
+    
+    if(list_head != NULL)
+        list_head->prev_elem = NULL;
+        
     free(temp);
     return;
 }

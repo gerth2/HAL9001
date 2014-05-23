@@ -50,7 +50,7 @@ static void initalize_Singmaster_data();
 
 /*externally available functions*/
 void init_data_structs();
-int rotate_face(cube_t * in_cube, cube_t * out_cube, unsigned char face, unsigned char direction);
+void rotate_face(cube_t * in_cube, cube_t * out_cube, unsigned char face, unsigned char direction);
 int create_Singmaster_string(char *output, cube_t * input_cube);
 int parse_Singmaster_string(char *input, cube_t * output_cube);
 
