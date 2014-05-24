@@ -30,6 +30,8 @@ clean:
 	rm -f gen_heuristic/obj/*
 	rm -f *.exe
 	rm -f gen_heuristic/*.exe
+	rm -f gen_heuristic/*.stackdump
+	rm -f *.stackdump
     
 
 

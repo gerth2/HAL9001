@@ -20,6 +20,7 @@
 #define NUM_CUBIE_COMB 32 /*total combination of positions and orientations takes up 5 bits, so 32 possible combinations*/
 #define DIST_UNDEFINED 0xFF
 #define DIST_MAX 0xFE
+#define NUM_HEURISTICS 5
 
 /*structure for linked list*/
 typedef struct List_Elem
@@ -31,24 +32,28 @@ typedef struct List_Elem
 
 } listelem_t;
 
+/*local functions*/
 listelem_t * init_list();
 listelem_t * append_element(cube_t * temp_cube, unsigned char sol_dist_input);
 void remove_head();
+void cube_error_check(cube_t * test_cube);
 
 /*Global Variables*/
 listelem_t * list_head; /*points to head node*/
 listelem_t * list_tail; /*points to tail node*/
 
-unsigned char temp_heuristic_c1[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
-/*                  Corners:         1               3               4                7       */
-unsigned char temp_heuristic_c2[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
-/*                  Corners:         0               2               5                6       */
+unsigned char temp_heuristic[NUM_HEURISTICS][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
+/*                  Corners:       0               1               3               4                7       */
+/*                  Corners:       1               0               2               5                6       */
+/*                    Edges:       2               1               4               7                11      */
+/*                    Edges:       3               0               3               5                6       */
+/*                    Edges:       4               2               8               9                10      */
 
-unsigned char temp_heuristic_e1[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
-/*                    Edges:         1               4               7                11      */
-unsigned char temp_heuristic_e2[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
-/*                    Edges:         0               3               5                6       */
-unsigned char temp_heuristic_e3[NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB][NUM_CUBIE_COMB];
-/*                    Edges:         2               8               9                10      */
+/*this constant array facilitates the mapping expressed above in code:*/
+const unsigned char heur_cubie_mapping[NUM_HEURISTICS][4] = {{1,3,4,7}, 
+                                                             {0,2,5,6},
+                                                             {1,4,7,11},
+                                                             {0,3,5,6},
+                                                             {2,8,9,10}};
 
 #endif

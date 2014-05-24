@@ -20,14 +20,10 @@ int main()
     unsigned char twist_iter = 0;
     unsigned long num_analyzed = 0;
     int print_iter[4];
+    unsigned char heur_iter = 0;
     
     init_data_structs();
-    memset(temp_heuristic_c1, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
-    memset(temp_heuristic_c2, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
-    memset(temp_heuristic_e1, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
-    memset(temp_heuristic_e2, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
-    memset(temp_heuristic_e3, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32);
-
+    memset(temp_heuristic, DIST_UNDEFINED, sizeof(unsigned char)*32*32*32*32*5);
 
     /*heuristic generation will be done via a Breadth-first search implemented through a doublly linked list*/
     /*each node in the search is expressed through one element of the linked list*/
@@ -39,35 +35,54 @@ int main()
     /*list, and the process is repeated on the new head of the list. The process continues until the list is empty.*/
     /*Only one process should be running at a time, so all atomicity should not matter.*/
     
-    /*initialize linked list*/
-    list_head = init_list();
-    list_tail = list_head;
-    
-    /*set goal state as zero-valued heuristic*/
-    temp_heuristic_c1[list_head->cube.c[1]][list_head->cube.c[3]][list_head->cube.c[4]][list_head->cube.c[7]] = 0;
-    
-    
-    while(list_head != NULL)
+    /*do all five heuristics*/
+    for(heur_iter = 0; heur_iter < NUM_HEURISTICS; heur_iter ++)
     {
-        /*explore all children of the head node*/
-        for(face_iter = 0; face_iter < NUM_FACES; face_iter++)
+        
+        printf("Generating Heuristic #%d\n", heur_iter);
+        /*initialize linked list*/
+        list_head = init_list();
+        list_tail = list_head;
+        num_analyzed = 0;
+        /*set goal state as zero-valued heuristic*/
+        if(heur_iter == 0 || heur_iter == 1) /*awkward if statement to handle e vs c */
+            temp_heuristic[heur_iter][list_head->cube.c[heur_cubie_mapping[heur_iter][0]]][list_head->cube.c[heur_cubie_mapping[heur_iter][1]]][list_head->cube.c[heur_cubie_mapping[heur_iter][2]]][list_head->cube.c[heur_cubie_mapping[heur_iter][3]]] = 0;
+        else
+            temp_heuristic[heur_iter][list_head->cube.e[heur_cubie_mapping[heur_iter][0]]][list_head->cube.e[heur_cubie_mapping[heur_iter][1]]][list_head->cube.e[heur_cubie_mapping[heur_iter][2]]][list_head->cube.e[heur_cubie_mapping[heur_iter][3]]] = 0;
+        while(list_head != NULL)
         {
-            for(twist_iter = 1; twist_iter <= NUM_TWISTS; twist_iter++) /*1-based indexing for twists for mathematical simplicity*/
+            /*explore all children of the head node*/
+            for(face_iter = 0; face_iter < NUM_FACES; face_iter++)
             {
-                /*generate a child*/
-                rotate_face(&(list_head->cube), &temp_cube, face_iter, twist_iter);
-                //printf("Old Cube: %d %d %d %d \nNew Cube: %d %d %d %d\n\n", list_head->cube.c[0],list_head->cube.c[1],list_head->cube.c[2],list_head->cube.c[3],temp_cube.c[0],temp_cube.c[1],temp_cube.c[2],temp_cube.c[3] );
-                /*if the child is unexplored, enter distance into heuristic struct and add child to end of linked list*/
-                if(temp_heuristic_c1[temp_cube.c[1]][temp_cube.c[3]][temp_cube.c[4]][temp_cube.c[7]] == DIST_UNDEFINED)
+                for(twist_iter = 1; twist_iter <= NUM_TWISTS; twist_iter++) /*1-based indexing for twists for mathematical simplicity*/
                 {
-                    temp_heuristic_c1[temp_cube.c[1]][temp_cube.c[3]][temp_cube.c[4]][temp_cube.c[7]] = list_head->sol_dist+1;
-                    append_element(&temp_cube, list_head->sol_dist+1); /*assume uniform cost for now*/
-                    num_analyzed = num_analyzed + 1;
+                    /*generate a child*/
+                    rotate_face(&(list_head->cube), &temp_cube, face_iter, twist_iter);
+                    cube_error_check(&temp_cube); /*DEBUGGING ONLY*/
+                    /*if the child is unexplored, enter distance into heuristic struct and add child to end of linked list*/
+                    if(heur_iter == 0 || heur_iter == 1)
+                    {
+                        if(temp_heuristic[heur_iter][temp_cube.c[heur_cubie_mapping[heur_iter][0]]][temp_cube.c[heur_cubie_mapping[heur_iter][1]]][temp_cube.c[heur_cubie_mapping[heur_iter][2]]][temp_cube.c[heur_cubie_mapping[heur_iter][3]]] == DIST_UNDEFINED)
+                        {
+                            temp_heuristic[heur_iter][temp_cube.c[heur_cubie_mapping[heur_iter][0]]][temp_cube.c[heur_cubie_mapping[heur_iter][1]]][temp_cube.c[heur_cubie_mapping[heur_iter][2]]][temp_cube.c[heur_cubie_mapping[heur_iter][3]]]= list_head->sol_dist+1;
+                            append_element(&temp_cube, list_head->sol_dist+1); /*assume uniform cost for now*/
+                            num_analyzed = num_analyzed + 1;
+                        }
+                    }
+                    else
+                    {
+                        if(temp_heuristic[heur_iter][temp_cube.e[heur_cubie_mapping[heur_iter][0]]][temp_cube.e[heur_cubie_mapping[heur_iter][1]]][temp_cube.e[heur_cubie_mapping[heur_iter][2]]][temp_cube.e[heur_cubie_mapping[heur_iter][3]]] == DIST_UNDEFINED)
+                        {
+                            temp_heuristic[heur_iter][temp_cube.e[heur_cubie_mapping[heur_iter][0]]][temp_cube.e[heur_cubie_mapping[heur_iter][1]]][temp_cube.e[heur_cubie_mapping[heur_iter][2]]][temp_cube.e[heur_cubie_mapping[heur_iter][3]]]= list_head->sol_dist+1;
+                            append_element(&temp_cube, list_head->sol_dist+1); /*assume uniform cost for now*/
+                            num_analyzed = num_analyzed + 1;
+                        }
+                    }
                 }
             }
+            remove_head(); /*we're done with this node, move on*/
+            printf("%d\n", num_analyzed);
         }
-        remove_head(); /*we're done with this node, move on*/
-        printf("%d\n", num_analyzed);
     }
     
 
@@ -96,46 +111,57 @@ int main()
     fprintf(f, " ***********************************************************************************************************************\n");
     fprintf(f, " */\n\n\n\n");
     
-    fprintf(f, "unsigned char heuristic_c1[32][32][32][32] = \n{\n");
-    for(print_iter[0] = 0; print_iter[0] < 32; print_iter[0]++)
+    fprintf(f, "unsigned char heuristic[32][32][32][32] = \n{\n");
+    
+    for(heur_iter = 0; heur_iter < NUM_HEURISTICS; heur_iter++)
     {
         fprintf(f, "{\n");
-        for(print_iter[1] = 0; print_iter[1] < 32; print_iter[1]++)
+        fprintf(f, "/*Heuristic #%d:*/\n", heur_iter);
+        for(print_iter[0] = 0; print_iter[0] < 32; print_iter[0]++)
         {
             fprintf(f, "{\n");
-            fprintf(f, "/*%d, %d, X, X*/\n", print_iter[0], print_iter[1]); /*print marker*/
-            for(print_iter[2] = 0; print_iter[2] < 32; print_iter[2]++)
+            for(print_iter[1] = 0; print_iter[1] < 32; print_iter[1]++)
             {
-                fprintf(f, "{");
-                for(print_iter[3] = 0; print_iter[3] < 32; print_iter[3]++)
+                fprintf(f, "{\n");
+                fprintf(f, "/*%d, %d, X, X*/\n", print_iter[0], print_iter[1]); /*print marker*/
+                for(print_iter[2] = 0; print_iter[2] < 32; print_iter[2]++)
                 {
-                    if(print_iter[3] == 31)
-                        fprintf(f,"%d" ,temp_heuristic_c1[print_iter[0]][print_iter[1]][print_iter[2]][print_iter[3]]);
+                    fprintf(f, "{");
+                    for(print_iter[3] = 0; print_iter[3] < 32; print_iter[3]++)
+                    {
+                        if(print_iter[3] == 31)
+                            fprintf(f,"%d" ,temp_heuristic[heur_iter][print_iter[0]][print_iter[1]][print_iter[2]][print_iter[3]]);
+                        else
+                            fprintf(f,"%d," ,temp_heuristic[heur_iter][print_iter[0]][print_iter[1]][print_iter[2]][print_iter[3]]);
+                    }
+                    if(print_iter[2] == 31)
+                        fprintf(f, "}");
                     else
-                        fprintf(f,"%d," ,temp_heuristic_c1[print_iter[0]][print_iter[1]][print_iter[2]][print_iter[3]]);
+                        fprintf(f, "},");
+                    fprintf(f,"\n");
                 }
-                if(print_iter[2] == 31)
+                if(print_iter[1] == 31)
                     fprintf(f, "}");
                 else
                     fprintf(f, "},");
-                fprintf(f,"\n");
+                fprintf(f,"\n\n\n");
             }
-            if(print_iter[1] == 31)
+            if(print_iter[0] == 31)
                 fprintf(f, "}");
             else
                 fprintf(f, "},");
-            fprintf(f,"\n\n\n");
+            fprintf(f,"\n\n\n\n\n");
         }
-        if(print_iter[0] == 31)
+        if(heur_iter == NUM_HEURISTICS-1)
             fprintf(f, "}");
         else
             fprintf(f, "},");
-        fprintf(f,"\n\n\n\n\n");
+        fprintf(f,"\n\n\n\n\n\n\n");
     }
-    fprintf(f, "};\n\n");
+    fprintf(f, "};\n\n\n\n\n\n\n\n\n\n");
     
     /*close guard includes*/
-    fprintf(f, " #endif\n");
+    fprintf(f, "#endif\n");
     /*close file*/
     fclose(f);
     
@@ -207,3 +233,20 @@ void remove_head()
     return;
 }
 
+void cube_error_check(cube_t * test_cube)
+{
+    int i;
+    
+    for(i = 0; i < NUM_CORNERS; i++)
+    {
+        if(test_cube->c[i] > 31)
+            printf("ERROR: corner position/orientation invalid\n");
+    }
+    
+    for(i = 0; i < NUM_EDGES; i++)
+    {
+        if(test_cube->e[i] > 31)
+            printf("ERROR: edge position/orientation invalid\n");
+    }
+
+}
