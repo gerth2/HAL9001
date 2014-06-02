@@ -12,8 +12,8 @@
 ***********************************************************************************************************************
 */
 
-#include "..\src\moves.h"
-#include "..\src\structures.h"
+#include "..\src_V1\moves.h"
+#include "..\src_V1\structures.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

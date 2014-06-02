@@ -8,16 +8,16 @@ INCLUDES=src
 OBJS=cubex.o
 LIBS=
 
-all: solve
+all: solveV2
 
-solve: obj/solve.o obj/moves.o
-	gcc -g obj/solve.o obj/moves.o -o solve
+solveV1: obj/solveV1.o obj/moves.o
+	gcc -g obj/solveV1.o obj/moves.o -o bin/solve_V1
 
-obj/moves.o: src/moves.c src/moves.h src/structures.h
-	gcc -c -g src/moves.c -o obj/moves.o
+obj/moves.o: src_V1/moves.c src_V1/moves.h src_V1/structures.h
+	gcc -c -g src_V1/moves.c -o obj/moves.o
 
-obj/solve.o: src/solve.c src/solve.h src/structures.h
-	gcc -c -g src/solve.c -o obj/solve.o
+obj/solveV1.o: src_V1/solve.c src_V1/solve.h src_V1/structures.h
+	gcc -c -g src_V1/solve.c -o obj/solveV1.o
 	
 heuristic: obj/moves.o gen_heuristic/obj/gen_heuristic.o
 	gcc -g obj/moves.o gen_heuristic/obj/gen_heuristic.o -o gen_heuristic/gen_heuristic
@@ -25,8 +25,12 @@ heuristic: obj/moves.o gen_heuristic/obj/gen_heuristic.o
 gen_heuristic/obj/gen_heuristic.o: gen_heuristic/gen_heuristic.c gen_heuristic/gen_heuristic.h
 	gcc -c -g gen_heuristic/gen_heuristic.c -o gen_heuristic/obj/gen_heuristic.o
 	
+solveV2: src_V2/sirgedas_sol.cpp
+	g++ src_V2/sirgedas_sol.cpp -o bin/solve_V2
+    
 clean:
 	rm -f obj/*
+	rm -f bin/*
 	rm -f gen_heuristic/obj/*
 	rm -f *.exe
 	rm -f gen_heuristic/*.exe

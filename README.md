@@ -14,9 +14,20 @@ This Repository contains the source code for the System.
 
 The robot is based in a Raspberry Pi system with the camera module.
 
+Version 1 solution:
 The solution algorithm is heavily based on Richard E. Korf's  "Finding Optimal Solutions to Rubik's Cube Using Pattern 
 Databases" (1997), with modifications to the heuristic function to match our hardware capabilities. The paper can be 
 found at http://www.cs.princeton.edu/courses/archive/fall06/cos402/papers/korfrubik.pdf  .
+
+Version 2 solution:
+The solution algorithm comes from Tomas Sirgedas, who wrote a minimal-code implementation of the solution for a 
+competition. The code was published online, we took it and un-golfed it so it was hopefully more readable. It
+is an implementation of Thistlethwaite's algorithm, which theoretically returns less that 48 moves for every
+input cube, and averages around 32 moves. Unfortunately, it does not account for any of our hardware constraints,
+so we may have to deal with the non-optimality of the solutions.
+Cube Contest Code source: http://tomas.rokicki.com/cubecontest/winners.html
+Thistlethwaite's Algorithm : http://en.wikipedia.org/wiki/Morwen_Thistlethwaite#Thistlethwaite.27s_algorithm
+
 
 =======================================================================================================================
 
@@ -37,17 +48,21 @@ Key Files:
 main.py - Initializes the hardware, waits for the start command, and then solves the cube. Performs all peripheral
     hardware interfacing except servos (network? bluetooth? timer display? features unknown as of now...)
 
-get_init_state.py - captures images of all six faces of the cube, and generates a .txt file with the initial state
+scripts/get_init_state.py - captures images of all six faces of the cube, and generates a .txt file with the initial state
     of the scrambled cube.
 
-solve.exe - high-speed executable to take the initial cube state and generate a series of face rotations required to
+bin/solve_V1.exe - high-speed executable to take the initial cube state and generate a series of face rotations required to
     solve the scrambled cube. Outputs to text file.
     Source: solve.c/.h - main algorithm for searching for solution
             structures.h - header with the data structures used to represent the cube states
             moves.c/.h - functions that describe the result of a face rotation
             heuristic.h - heuristic function lookup table
+
+bin/solve_V2.exe - high-speed executable to take the initial cube state and generate a series of face rotations required to
+    solve the scrambled cube. Outputs to text file. 
+    Source: sirgedas_sol.cpp - Tomas Sirgedas's solution, with added comments
             
-manipulate.py - Turns output from solve.exe into a series of movements for the hardware to execute to solve the cube.
+scripts/manipulate.py - Turns output from solve.exe into a series of movements for the hardware to execute to solve the cube.
 
 Support files:
 gen_heuristic.exe (.c/.h) - starts with a solved cube, performs virtual moves on each face, records each resulting

@@ -87,7 +87,7 @@ int main()
     
 
     /*open heuristic file for writing*/
-    f=fopen("src/heuristic.h", "w");
+    f=fopen("src_V1/heuristic.h", "w");
     if(f == NULL)
     {
         printf("ERROR: gen_heuristic.c - cannot open heuristic.h for writing.\n");
