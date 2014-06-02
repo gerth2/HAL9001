@@ -25,8 +25,8 @@ heuristic: obj/moves.o gen_heuristic/obj/gen_heuristic.o
 gen_heuristic/obj/gen_heuristic.o: gen_heuristic/gen_heuristic.c gen_heuristic/gen_heuristic.h
 	gcc -c -g gen_heuristic/gen_heuristic.c -o gen_heuristic/obj/gen_heuristic.o
 	
-solveV2: src_V2/sirgedas_sol.cpp
-	g++ src_V2/sirgedas_sol.cpp -o bin/solve_V2
+solveV2: src_V2/jaap_sol.c
+	gcc -g src_V2/jaap_sol.c -o bin/solve_V2 -Wno-write-strings
     
 clean:
 	rm -f obj/*

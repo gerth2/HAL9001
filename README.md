@@ -20,13 +20,11 @@ Databases" (1997), with modifications to the heuristic function to match our har
 found at http://www.cs.princeton.edu/courses/archive/fall06/cos402/papers/korfrubik.pdf  .
 
 Version 2 solution:
-The solution algorithm comes from Tomas Sirgedas, who wrote a minimal-code implementation of the solution for a 
-competition. The code was published online, we took it and un-golfed it so it was hopefully more readable. It
-is an implementation of Thistlethwaite's algorithm, which theoretically returns less that 48 moves for every
-input cube, and averages around 32 moves. Unfortunately, it does not account for any of our hardware constraints,
-so we may have to deal with the non-optimality of the solutions.
+The solution algorithm comes from Jaap Scherphuis, as part of a competition. It averaged around 17 moves per solution,
+and runs in under .5 seconds.
 Cube Contest Code source: http://tomas.rokicki.com/cubecontest/winners.html
 Thistlethwaite's Algorithm : http://en.wikipedia.org/wiki/Morwen_Thistlethwaite#Thistlethwaite.27s_algorithm
+Result testing online: http://tomas.rokicki.com/cgi-bin/cube-gen.pl
 
 
 =======================================================================================================================
@@ -60,7 +58,7 @@ bin/solve_V1.exe - high-speed executable to take the initial cube state and gene
 
 bin/solve_V2.exe - high-speed executable to take the initial cube state and generate a series of face rotations required to
     solve the scrambled cube. Outputs to text file. 
-    Source: sirgedas_sol.cpp - Tomas Sirgedas's solution, with added comments
+    Source: jaap_sol.c - Jaap Scherphuis's solution, with added comments and ported to C
             
 scripts/manipulate.py - Turns output from solve.exe into a series of movements for the hardware to execute to solve the cube.
 
