@@ -63,7 +63,6 @@ CubieSing_DBR = 7
 singmaster_edge = ["UF ", "UR ", "UB ", "UL ", "DF ", "DR ", "DB ", "DL ", "FR ", "FL ", "BR ", "BL "]
 singmaster_corner = ["UFR ", "URB ", "UBL ", "ULF ", "DRF ", "DFL ", "DLB ", "DBR "]
 
-#Our assumptions thus far imply that the imaging order should be red, blue, orange, green, white, yellow
 
 #This will constrain the robot such that the cube must be loaded in the proper orientation (white facing "up"). A 
 #generalization might be to make this "up" color variable, and at each step record the face's color, creating a 
@@ -77,6 +76,10 @@ CubeFace_down = CubeColor_yellow
 CubeFace_back= CubeColor_orange
 CubeFace_up = CubeColor_white
 
+#Our assumptions thus far imply that the imaging order should be red, blue, orange, green, white, yellow
+#define mapping between image number and faces
+img_to_face_mapping = [CubeFace_front, CubeFace_right, CubeFace_back, CubeFace_left, CubeFace_up, CubeFace_down]
+
 #ordered list of non-ordered sets for corner cubies. singmaster order
 corner_cubie_color_sets = [Set([CubeColor_white, CubeColor_red, CubeColor_blue]), Set([CubeColor_white, CubeColor_orange, CubeColor_blue]), Set([CubeColor_white, CubeColor_orange, CubeColor_green]), Set([CubeColor_white, CubeColor_red, CubeColor_green]), Set([CubeColor_yellow, CubeColor_red, CubeColor_blue]), Set([CubeColor_yellow, CubeColor_red, CubeColor_green]), Set([CubeColor_yellow, CubeColor_orange, CubeColor_green]), Set([CubeColor_yellow, CubeColor_blue, CubeColor_orange])]
 #     cubie:                         UFR                                                              URB                                                        UBL                                                        ULF                                                 DRF                                                          DFL                                                    DLB                                                    DBR    
@@ -85,14 +88,16 @@ corner_cubie_color_sets = [Set([CubeColor_white, CubeColor_red, CubeColor_blue])
 edge_cubie_color_sets = [Set([CubeColor_white, CubeColor_red]), Set([CubeColor_white, CubeColor_blue]), Set([CubeColor_white, CubeColor_orange]), Set([CubeColor_white, CubeColor_green]), Set([CubeColor_yellow, CubeColor_red]), Set([CubeColor_yellow, CubeColor_blue]), Set([CubeColor_yellow, CubeColor_orange]), Set([CubeColor_yellow, CubeColor_green]), Set([CubeColor_red, CubeColor_blue]), Set([CubeColor_red, CubeColor_green]), Set([CubeColor_orange, CubeColor_blue]), Set([CubeColor_orange, CubeColor_green])]
 #     cubie:                UF                                     UR                                            UB                                   UL                                              DF                                    DR                                     DB                                            DL                                     FR                                    FL                                     BR                                        BL
 
-#create list of lists for storing the cube colors read in by camera (one list per face)
+#create list of lists for storing the cube colors read in by camera (one list per face, each element describes color of subface. see above for subface numbering)
 cube_colors = [[CubeColor_undef]*9 for i in range(6)]
 
 #mapping of two/three subfaces in each cubie to index in cube_colors. Singmaster order. 
-edge_subface_map = [ [[CubeFace_front, 1], [CubeFace_up, 7]], [[CubeFace_right, 1], [CubeFace_up, 5]], [[CubeFace_back, 1], [CubeFace_up, 1]],[[CubeFace_left, 1], [CubeFace_up, 7]], [[CubeFace_down, 1], [CubeFace_front, 7]], [[CubeFace_down, 5], [CubeFace_right, 7]], [[CubeFace_down, 7], [CubeFace_back, 7]], [[CubeFace_down, 3], [CubeFace_left, 7]],[[CubeFace_front, 5], [CubeFace_right, 3]],[[CubeFace_front, 3], [CubeFace_left, 5]],[[CubeFace_back, 3], [CubeFace_right, 5]],[[CubeFace_back, 5], [CubeFace_left, 5]]]
+edge_subface_map = [ [[CubeFace_front, 1], [CubeFace_up, 7]], [[CubeFace_right, 1], [CubeFace_up, 5]], [[CubeFace_back, 1], [CubeFace_up, 1]],[[CubeFace_left, 1], [CubeFace_up, 3]], [[CubeFace_down, 1], [CubeFace_front, 7]], [[CubeFace_down, 5], [CubeFace_right, 7]], [[CubeFace_down, 7], [CubeFace_back, 7]], [[CubeFace_down, 3], [CubeFace_left, 7]],[[CubeFace_front, 5], [CubeFace_right, 3]],[[CubeFace_front, 3], [CubeFace_left, 5]],[[CubeFace_back, 3], [CubeFace_right, 5]],[[CubeFace_back, 5], [CubeFace_left, 3]]]
 #cubie:                                  UF                                       UR                                      UB                                      UL                                     DF                                        DR                                           DB                                       DL                                        FR                                        FL                                        BR                                        BL                    \
 corner_subface_map = [ [[CubeFace_up, 8], [CubeFace_front, 2],[CubeFace_right, 0]],  [[CubeFace_up, 2], [CubeFace_right, 2],[CubeFace_back, 0]],  [[CubeFace_up, 0], [CubeFace_back, 2],[CubeFace_left, 0]],  [[CubeFace_up, 6], [CubeFace_front, 0],[CubeFace_left, 2]],   [[CubeFace_down, 2], [CubeFace_right, 6],[CubeFace_front, 8]],   [[CubeFace_down, 0], [CubeFace_front, 6],[CubeFace_left, 8]],   [[CubeFace_down, 6], [CubeFace_left, 6],[CubeFace_back, 8]],   [[CubeFace_down, 8], [CubeFace_back, 6],[CubeFace_right, 8]]]
 #cubie:                                           UFR                                                    URB                                                         UBL                                                               ULF                                                             DRF                                                             DFL                                                            DLB                                                             DBR                                \
+
+
 
 #define pixel locations in cube face images TWEAK THESE TO MATCH REAL-WORLD DATA
 top_row_pxl = 50
@@ -215,23 +220,23 @@ for img_iter in range(0, 6):
             else:
                 color = CubeColor_white
             #set cubie face as that color
-            cube_colors[img_iter][3*y_iter + x_iter] = color
+            cube_colors[img_to_face_mapping[img_iter]][3*y_iter + x_iter] = color
             
 print cube_colors # debug
 
 #error check - ensure that every center subface matches the side's solved color in the 
 #predefined orientation:
-if(CubeFace_front != cube_colors[0][4]):
+if(CubeFace_front != cube_colors[img_to_face_mapping[0]][4]):
     print "Error in cube mapping, front face is not correct color"
-if(CubeFace_right != cube_colors[1][4]):
+if(CubeFace_right != cube_colors[img_to_face_mapping[1]][4]):
     print "Error in cube mapping, front face is not correct color"
-if(CubeFace_back != cube_colors[2][4]):
+if(CubeFace_back != cube_colors[img_to_face_mapping[2]][4]):
     print "Error in cube mapping, front face is not correct color"
-if(CubeFace_left != cube_colors[3][4]):
+if(CubeFace_left != cube_colors[img_to_face_mapping[3]][4]):
     print "Error in cube mapping, front face is not correct color"
-if(CubeFace_up != cube_colors[4][4]):
+if(CubeFace_up != cube_colors[img_to_face_mapping[4]][4]):
     print "Error in cube mapping, front face is not correct color"
-if(CubeFace_down != cube_colors[5][4]):
+if(CubeFace_down != cube_colors[img_to_face_mapping[5]][4]):
     print "Error in cube mapping, front face is not correct color"
 
 #for each cubie, look at what colors were read in for it, and map it to some cubie value
