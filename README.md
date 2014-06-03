@@ -12,7 +12,7 @@
 
 This Repository contains the source code for the System.
 
-The robot is based in a Raspberry Pi system with the camera module.
+The robot is based on a Raspberry Pi system with the camera module.
 
 Version 1 solution:
 The solution algorithm is heavily based on Richard E. Korf's  "Finding Optimal Solutions to Rubik's Cube Using Pattern 
@@ -25,6 +25,16 @@ and runs in under .5 seconds.
 Cube Contest Code source: http://tomas.rokicki.com/cubecontest/winners.html
 Thistlethwaite's Algorithm : http://en.wikipedia.org/wiki/Morwen_Thistlethwaite#Thistlethwaite.27s_algorithm
 Result testing online: http://tomas.rokicki.com/cgi-bin/cube-gen.pl
+
+=======================================================================================================================
+Install Prerequisites (In this order):
+
+Windows 7 x64:
+-presumably you already have git if you're reading this.
+-cygwin (for gcc/make - be sure these are checked when installing) (https://www.cygwin.com/setup-x86_64.exe)
+-python 2.7 x86 VERSION ONLY (https://www.python.org/ftp/python/2.7/python-2.7.msi)
+--will have to add this to cygwin's path by putting "export PATH=$PATH:/cygdrive/c/Python27/" into the <cygwin install>/home/<user>/.bashrc file.
+-PIL (Python Imaging Library) - (http://effbot.org/media/downloads/PIL-1.1.7.win32-py2.7.exe)
 
 
 =======================================================================================================================

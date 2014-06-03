@@ -26,6 +26,10 @@
 *.x86_64
 *.hex
 
+#temporary file folder
+temp/*
+temp
+
 
 
 #Python Ignores:
