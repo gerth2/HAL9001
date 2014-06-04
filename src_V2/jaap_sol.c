@@ -283,22 +283,41 @@ int searchphase(int movesleft, int movesdone,int lastmove){
 
 int main(int argc, char **argv){
 	int f,i=0,j=0,k=0,pc,mor;
+    char input[20][5];
+    
+    printf("Generating solution to cube...\n");
+    
+    FILE * in_file;
+    FILE * out_file;
+    
+    //open input file
+    in_file = fopen("temp/cube_init_state.tmp", "r");
+    if(in_file == NULL)
+    {
+        printf("ERROR init state file cannot be opened\n");
+        return -1;
+    }
+    
+    //read each input (%s stops at every whitespace)
+    for(i = 0; i < 20; i++)
+    {
+        fscanf(in_file, "%s", input[i]);
+    }
+    
+    fclose(in_file);
 
 	// initialise tables
-	for(; k<20; k++) 
+	for(k = 0; k<20; k++) 
         val[k]=k<12?2:3;
-	for(; j<8; j++) 
+	for(j = 0; j<8; j++) 
         filltable(j);
 
 	// read input, 20 pieces worth
-	for(; i<20; i++){
+	for(i = 0; i<20; i++){
 		f=pc=k=mor=0;
 		for(;f<val[i];f++){
-			// read input from stdin, or...
-			//     do{cin>>c;}while(c==' ');
-			//     j=strchr(faces,c)-faces;
-			// ...from command line and get face number of facelet
-			j=strchr(faces,argv[i+1][f])-faces;
+			j=strchr(faces,input[i][f])-faces;
+            //j=strchr(faces,argv[i+1][f])-faces;
 			// keep track of principal facelet for orientation
 			if(j>k) {k=j;mor=f;}
 			//construct bit hash code
@@ -313,18 +332,34 @@ int main(int argc, char **argv){
 	}
 
 	//solve the cube
+    
+    //open output file
+    out_file = fopen("temp/cube_sol.tmp", "w");
+    if(out_file == NULL)
+    {
+        printf("ERROR Cannot open output file\n");
+        //free the tables, practicing good memory management even in error state.
+        for(i = 0; i < 8; i++)
+            free(tables[i]);
+    }
+
 	// four phases
+    printf("Solution: ");
 	for( ; phase<8; phase+=2){
 		// try each depth till solved
 		for( j=0; !searchphase(j,0,9); j++);
 		//output result of this phase
 		for( i=0; i<j; i++)
-			printf("%c%d ", "FBRLUD"[move[i]], moveamount[i]);
-		//cout<<" ";
+        {
+			fprintf(out_file,"%c%d ", "FBRLUD"[move[i]], moveamount[i]);
+            printf("%c%d ", "FBRLUD"[move[i]], moveamount[i]);
+        }
 	}
-    
+    printf("\n");
     //free the tables
     for(i = 0; i < 8; i++)
         free(tables[i]);
+    
+    fclose(out_file);
     
 }

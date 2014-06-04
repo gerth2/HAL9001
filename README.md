@@ -35,6 +35,7 @@ Windows 7 x64:
 -python 2.7 x86 VERSION ONLY (https://www.python.org/ftp/python/2.7/python-2.7.msi)
 --will have to add this to cygwin's path by putting "export PATH=$PATH:/cygdrive/c/Python27/" into the <cygwin install>/home/<user>/.bashrc file.
 -PIL (Python Imaging Library) - (http://effbot.org/media/downloads/PIL-1.1.7.win32-py2.7.exe)
+-Raspberry Pi Python GPIO and servo libraries: http://pythonhosted.org/RPIO/index.html
 
 
 =======================================================================================================================

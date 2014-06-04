@@ -145,7 +145,7 @@ pxl_locs = [[(lft_col_pxl, top_row_pxl),(mid_col_pxl, top_row_pxl),(rgt_col_pxl,
 #given an acquisition stage, acq_cube_rotate puts the cube in the proper position to be 
 #   photographed by the pi camera.
 def acq_cube_rotate(stage):
-    if stage == 0: #init from load position, prep to  image front
+    if stage == 0: #init from home position, prep to  image front
         print "Moving to image front face"
 #ADD SERVO MOVING CODE HERE
     elif stage == 1: #prep to image right
@@ -175,7 +175,8 @@ def acquire_imgs():
     for stage_iter in range(0,6):
         acq_cube_rotate(stage_iter); #properly position cube
         cmd = "raspistill -o temp/face"+str(stage_iter)+".jpg -n" #generate command
-        os.system(cmd) #take photo
+        if(os.system(cmd)): #take photo
+            sys.exit(-1) #exit if we can't take the picture properly
     acq_cube_rotate(6); #return cube to home position
 
     
@@ -187,11 +188,11 @@ def acquire_imgs():
 
 
 #get six images for the Rubik's cube
-acquire_imgs() #COMMENT IS TEMP/DEBUG
+#acquire_imgs() #COMMENT IS TEMP/DEBUG
 
 #open each image, fill the cube_colors array with the selected color
 for img_iter in range(0, 6):
-    img_path = "../temp/face" + str(img_iter) + ".jpg"
+    img_path = "temp/face" + str(img_iter) + ".jpg"
     im = Image.open(img_path)
     rgb_im = im.convert('RGB')
     for x_iter in range(0,3): #iterate over all nine color locations on each face
@@ -228,16 +229,22 @@ print cube_colors # debug
 #predefined orientation:
 if(CubeFace_front != cube_colors[img_to_face_mapping[0]][4]):
     print "Error in cube mapping, front face is not correct color"
+    sys.exit(-2) #exit if the read in cube was not correct
 if(CubeFace_right != cube_colors[img_to_face_mapping[1]][4]):
     print "Error in cube mapping, front face is not correct color"
+    sys.exit(-2) #exit if the read in cube was not correct
 if(CubeFace_back != cube_colors[img_to_face_mapping[2]][4]):
     print "Error in cube mapping, front face is not correct color"
+    sys.exit(-2) #exit if the read in cube was not correct
 if(CubeFace_left != cube_colors[img_to_face_mapping[3]][4]):
     print "Error in cube mapping, front face is not correct color"
+    sys.exit(-2) #exit if the read in cube was not correct
 if(CubeFace_up != cube_colors[img_to_face_mapping[4]][4]):
     print "Error in cube mapping, front face is not correct color"
+    sys.exit(-2) #exit if the read in cube was not correct
 if(CubeFace_down != cube_colors[img_to_face_mapping[5]][4]):
     print "Error in cube mapping, front face is not correct color"
+    sys.exit(-2) #exit if the read in cube was not correct
 
 #for each cubie, look at what colors were read in for it, and map it to some cubie value
 #edges
@@ -259,23 +266,26 @@ for corner_iter in range(0,8): #iterate over all the corner cubie locations
         if(0 == len(corner_cubie_color_sets[corner_iter].symmetric_difference(corner_cubie_under_test_color_set))):
             assigned_corner_cubies[corner_iter] = test_iter
             
-print "assigned edge cubies:"
-print assigned_edge_cubies
-print ""
-print "assigned corner cubies:"
-print assigned_corner_cubies
-print ""
 
 #generate the singmaster representation of the read-in cubie
 singmaster_string = ""
 for edge_iter in range(0,12):
     if(assigned_edge_cubies[edge_iter] == -1):
         print "ERROR! Edge Cubie not correctly classified"
+        sys.exit(-3) #exit if the read in cube was not correct
     singmaster_string = singmaster_string + singmaster_edge[assigned_edge_cubies[edge_iter]]
 for corner_iter in range(0,8):
     if(assigned_corner_cubies[corner_iter] == -1):
         print "ERROR! Corner Cubie not correctly classified"
+        sys.exit(-3) #exit if the read in cube was not correct
     singmaster_string = singmaster_string + singmaster_corner[assigned_corner_cubies[corner_iter]]
 
 print "Singmaster output:" 
 print singmaster_string
+
+#write an output file
+f = open('temp/cube_init_state.tmp', 'w')
+f.write(singmaster_string)
+f.close
+
+
