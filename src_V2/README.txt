@@ -28,6 +28,8 @@ About 31.3 moves on average.
 
 Programming language:
 C++ (mostly straight C, but with some very minor C++ flourishes)
+Note: We changed this to be only C for the ease of compilation and simplicity
+on an embedded system
 
 Program:
 The cube is stored in memory as a 20 character array containing the
